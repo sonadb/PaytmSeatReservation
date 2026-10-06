@@ -1,0 +1,6 @@
+@PaytmSeatReservation_HostAddress = http://localhost:5230
+
+GET {{PaytmSeatReservation_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

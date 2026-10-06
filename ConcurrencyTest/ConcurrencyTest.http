@@ -1,0 +1,6 @@
+@ConcurrencyTest_HostAddress = http://localhost:5079
+
+GET {{ConcurrencyTest_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

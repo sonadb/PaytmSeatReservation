@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="ConcurrencyTest/ConcurrencyTest.csproj" />
+  <Project Path="PaytmSeatReservation/PaytmSeatReservation.csproj" />
+</Solution>
