@@ -67,6 +67,9 @@ app.MapGet("/ready", async (AppDbContext db) =>
             });
         }
 
+        app.Logger.LogError(
+            "Database readiness check failed: CanConnectAsync returned false.");
+
         return Results.Json(
             new
             {
@@ -75,8 +78,12 @@ app.MapGet("/ready", async (AppDbContext db) =>
             },
             statusCode: 503);
     }
-    catch
+    catch (Exception ex)
     {
+        app.Logger.LogError(
+            ex,
+            "Database readiness check failed.");
+
         return Results.Json(
             new
             {
@@ -91,4 +98,3 @@ app.MapGet("/ready", async (AppDbContext db) =>
 app.MapControllers();
 
 app.Run();
-
