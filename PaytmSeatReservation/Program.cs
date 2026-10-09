@@ -1,3 +1,4 @@
+
 using Microsoft.EntityFrameworkCore;
 using PaytmSeatReservation.Data;
 
@@ -14,6 +15,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+// Request ID and structured request logging
 app.Use(async (context, next) =>
 {
     var requestId = context.Request.Headers["X-Request-Id"].FirstOrDefault()
@@ -39,12 +41,54 @@ app.Use(async (context, next) =>
     }
 });
 
-// Swagger enabled for Docker also
+// Swagger
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.UseHttpsRedirection();
+// Health check
+app.MapGet("/health", () =>
+{
+    return Results.Ok(new { status = "healthy" });
+});
 
+// Readiness check - verifies database connectivity
+app.MapGet("/ready", async (AppDbContext db) =>
+{
+    try
+    {
+        var canConnect = await db.Database.CanConnectAsync();
+
+        if (canConnect)
+        {
+            return Results.Ok(new
+            {
+                status = "ready",
+                database = "available"
+            });
+        }
+
+        return Results.Json(
+            new
+            {
+                status = "not_ready",
+                database = "unavailable"
+            },
+            statusCode: 503);
+    }
+    catch
+    {
+        return Results.Json(
+            new
+            {
+                status = "not_ready",
+                database = "unavailable"
+            },
+            statusCode: 503);
+    }
+});
+
+// Existing controller routes
 app.MapControllers();
 
 app.Run();
+
